@@ -1,9 +1,10 @@
 import type {Metadata} from 'next'
 import './globals.css'
-import NotificationContainer from '@/app/components/ui/NotificationContainer'
-import Header from './components/Header'
-import {Footer} from './components/Footer'
-import {Background} from './components/Background'
+import NotificationContainer from '@/components/ui/NotificationContainer'
+import Header from '../components/Header'
+import {Footer} from '../components/Footer'
+import {Background} from '../components/Background'
+import {Providers} from '@/providers/sessionProvider'
 
 export const metadata: Metadata = {
   title: 'weRate Certified',
@@ -16,14 +17,16 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="ru">
-      <body className="relative pt-[20px]">
-        <Background />
-        <Header />
-        <NotificationContainer />
-        <div className="relative z-[10] m-auto min-h-screen w-[80%] pb-16">{children}</div>
-        <Footer />
-      </body>
+    <html lang="en">
+      <Providers>
+        <body className="max-w-screen relative pb-[75px]">
+          <Background />
+          <Header />
+          <NotificationContainer />
+          <div className="relative z-[10] m-auto min-h-screen w-full pb-16 md:w-[80%]">{children}</div>
+          <Footer />
+        </body>
+      </Providers>
     </html>
   )
 }

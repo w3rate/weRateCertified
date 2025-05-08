@@ -1,10 +1,9 @@
-import {PageTitle} from './components/PageTitle'
-import {FeatureCard} from './components/FeatureCard'
-import ProjectGrid from '@/app/components/ui/ProjectGrid'
-import ProjectCard from '@/app/components/ui/ProjectCard'
-import Pagination from '@/app/components/ui/Pagination'
-import Disclaimer from '@/app/components/ui/Disclaimer'
-import {featuredProjectsData, allProjectsData} from './components/constants'
+import {PageTitle} from '../components/PageTitle'
+import {FeatureCard} from '../components/FeatureCard'
+import ProjectGrid from '@/components/ui/ProjectGrid'
+import ProjectCard from '@/components/ui/ProjectCard'
+import Disclaimer from '@/components/ui/Disclaimer'
+import {featuredProjectsData, allProjectsData} from '../components/constants'
 
 interface FeatureData {
   title: string
@@ -34,7 +33,7 @@ export default function Home() {
   const allForDisplay = allProjectsData
 
   return (
-    <div>
+    <main>
       <div className="p-6 pb-20 pt-10">
         {' '}
         <div className="mx-auto max-w-5xl">
@@ -95,10 +94,9 @@ export default function Home() {
               </ProjectGrid>
             </div>
           )}
-          <Pagination />
           <Disclaimer />
         </div>
       </div>
-    </div>
+    </main>
   )
 }

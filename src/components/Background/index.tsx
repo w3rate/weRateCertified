@@ -6,7 +6,7 @@ export const Background = () => (
       backgroundPosition: 'center',
       backgroundColor: '#181a26'
     }}
-    className={`fixed left-[0px] top-[0px] h-full w-full text-white antialiased`}
+    className={`max-w-screen fixed left-[0px] top-[0px] h-full w-full text-white antialiased`}
   >
     <img
       src="/glowingStar.svg"
