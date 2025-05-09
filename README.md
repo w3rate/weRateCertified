@@ -1,9 +1,13 @@
 How to run the App
 
 Install deps with `pnpm i`
+
 Dev run with `pnpm dev`
+
 Build `pnpm build`
+
 Start (after build) `pnpm start`
+
 
 Build while having one instance running in a dev mode will commonly crash.
 
