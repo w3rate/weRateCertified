@@ -3,14 +3,14 @@ import {useState} from 'react'
 
 const Onboarding = () => {
   const [step, setStep] = useState(1)
-  
-  let currentStepTitle = '';
+
+  let currentStepTitle = ''
   if (step === 1) {
-    currentStepTitle = 'Wallet Connection';
+    currentStepTitle = 'Wallet Connection'
   } else if (step === 2) {
-    currentStepTitle = 'Complete Your Profile';
+    currentStepTitle = 'Complete Your Profile'
   } else if (step === 3) {
-    currentStepTitle = 'Final Step';
+    currentStepTitle = 'Final Step'
   }
 
   return (
@@ -20,7 +20,7 @@ const Onboarding = () => {
       <div className="flex items-center justify-center gap-[10px] p-2">
         {[1, 2, 3].map((item) => (
           <div
-            key={item} 
+            key={item}
             className={`h-[10px] w-[10px] cursor-pointer rounded-full ${item === step ? 'bg-[#c4f]' : 'bg-[#335]'} transition-all hover:scale-110`}
           ></div>
         ))}
@@ -51,10 +51,10 @@ const Onboarding = () => {
         )}
         {step === 2 && (
           <>
-            <h3 className="text-[24px] font-[700] text-white mb-4">Complete Your Profile</h3>
-            
-            <div className="flex justify-center mb-4">
-              <div className="bg-slate-700/30 border-slate-600 hover:border-[#c4f] flex h-24 w-24 cursor-pointer items-center justify-center rounded-full border-2 border-dashed transition-colors">
+            <h3 className="mb-4 text-[24px] font-[700] text-white">Complete Your Profile</h3>
+
+            <div className="mb-4 flex justify-center">
+              <div className="flex h-24 w-24 cursor-pointer items-center justify-center rounded-full border-2 border-dashed border-slate-600 bg-slate-700/30 transition-colors hover:border-[#c4f]">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   width="24"
@@ -74,36 +74,34 @@ const Onboarding = () => {
                 <span className="sr-only">Add Profile Picture</span>
               </div>
             </div>
-            <div className="text-slate-300 mb-4 text-center text-sm">Add Profile Picture</div>
-            
+            <div className="mb-4 text-center text-sm text-slate-300">Add Profile Picture</div>
+
             <div className="mb-4">
-              <label className="text-slate-300 mb-2 block text-sm font-medium">Username</label>
+              <label className="mb-2 block text-sm font-medium text-slate-300">Username</label>
               <input
                 type="text"
-                className="border-slate-600 bg-slate-700 text-white ring-offset-[#181a26] file:text-white placeholder-slate-400 focus-visible:ring-[#c4f] flex h-10 w-full rounded-md border px-3 py-2 text-base file:border-0 file:bg-transparent file:text-sm file:font-medium focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 md:text-sm"
+                className="flex h-10 w-full rounded-md border border-slate-600 bg-slate-700 px-3 py-2 text-base text-white placeholder-slate-400 ring-offset-[#181a26] file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#c4f] focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 md:text-sm"
                 placeholder="SolanaExplorer"
                 defaultValue=""
               />
             </div>
-            
+
             <div className="mb-4">
-              <label className="text-slate-300 mb-2 block text-sm font-medium">Email (Optional)</label>
+              <label className="mb-2 block text-sm font-medium text-slate-300">Email (Optional)</label>
               <input
                 type="email"
-                className="border-slate-600 bg-slate-700 text-white ring-offset-[#181a26] file:text-white placeholder-slate-400 focus-visible:ring-[#c4f] flex h-10 w-full rounded-md border px-3 py-2 text-base file:border-0 file:bg-transparent file:text-sm file:font-medium focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 md:text-sm"
+                className="flex h-10 w-full rounded-md border border-slate-600 bg-slate-700 px-3 py-2 text-base text-white placeholder-slate-400 ring-offset-[#181a26] file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#c4f] focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 md:text-sm"
                 placeholder="your@email.com"
                 defaultValue=""
               />
-              <p className="text-slate-300 mt-1 text-xs">We'll only use this for important account notifications</p>
+              <p className="mt-1 text-xs text-slate-300">{`We'll only use this for important account notifications`}</p>
             </div>
 
             <div className="mb-4">
-              <label className="text-slate-300 mb-2 block text-sm font-medium">
-                How long have you been in Crypto?
-              </label>
+              <label className="mb-2 block text-sm font-medium text-slate-300">How long have you been in Crypto?</label>
               <button
                 type="button"
-                className="border-slate-600 bg-slate-700/50 text-slate-300 ring-offset-[#181a26] placeholder-slate-400 focus:ring-[#c4f] flex h-10 w-full items-center justify-between rounded-md border px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 [&>span]:line-clamp-1"
+                className="flex h-10 w-full items-center justify-between rounded-md border border-slate-600 bg-slate-700/50 px-3 py-2 text-sm text-slate-300 placeholder-slate-400 ring-offset-[#181a26] focus:outline-none focus:ring-2 focus:ring-[#c4f] focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 [&>span]:line-clamp-1"
               >
                 <span style={{pointerEvents: 'none'}}>Select your experience</span>
                 <svg
@@ -125,19 +123,22 @@ const Onboarding = () => {
             </div>
 
             <div className="mb-4">
-              <label className="text-slate-300 mb-2 block text-sm font-medium">Interests</label>
+              <label className="mb-2 block text-sm font-medium text-slate-300">Interests</label>
               <div className="flex flex-wrap gap-2">
                 {['Trader', 'Degen', 'Investor', 'VC', 'Noob', 'Whale', 'Creator', 'Hodler'].map((interest) => (
-                  <button key={interest} className="bg-slate-700/50 text-slate-300 hover:bg-slate-600 rounded-full px-4 py-2 text-sm transition-all">
+                  <button
+                    key={interest}
+                    className="rounded-full bg-slate-700/50 px-4 py-2 text-sm text-slate-300 transition-all hover:bg-slate-600"
+                  >
                     {interest}
                   </button>
                 ))}
-                <button className="bg-slate-700/30 text-slate-300 hover:bg-slate-600 rounded-full px-4 py-2 text-sm transition-all">
+                <button className="rounded-full bg-slate-700/30 px-4 py-2 text-sm text-slate-300 transition-all hover:bg-slate-600">
                   + Add More
                 </button>
               </div>
             </div>
-            
+
             <div className="mt-auto">
               <button
                 onClick={() => setStep(3)}
@@ -150,12 +151,12 @@ const Onboarding = () => {
         )}
         {step === 3 && (
           <>
-            <div className="from-[#c4f] to-purple-500 mb-4 rounded-xl bg-gradient-to-r p-4">
+            <div className="mb-4 rounded-xl bg-gradient-to-r from-[#c4f] to-purple-500 p-4">
               <h2 className="mb-1 text-center text-xl font-bold text-white">Welcome aboard!</h2>
               <p className="mb-0 text-center text-white/90">Your journey begins</p>
             </div>
-            <h3 className="text-[24px] font-[700] text-white text-center mb-4">What you can earn:</h3>
-            
+            <h3 className="mb-4 text-center text-[24px] font-[700] text-white">What you can earn:</h3>
+
             <div className="mb-6 space-y-4">
               <div className="flex items-center justify-between">
                 <div className="flex items-center">
@@ -175,7 +176,7 @@ const Onboarding = () => {
                   </svg>
                   <span className="text-lg text-white">Starting Points</span>
                 </div>
-                <span className="text-[#c4f] text-xl font-bold">100</span>
+                <span className="text-xl font-bold text-[#c4f]">100</span>
               </div>
               <div className="flex items-center justify-between">
                 <div className="flex items-center">
@@ -205,7 +206,9 @@ const Onboarding = () => {
             </div>
             <button
               className="w-full rounded-full bg-[#c4f] p-2 text-[16px] font-[600] text-white"
-              onClick={() => { alert('Start Rating Clicked!') }} // Пример действия
+              onClick={() => {
+                alert('Start Rating Clicked!')
+              }} // Пример действия
             >
               START RATING
             </button>

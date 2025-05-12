@@ -20,10 +20,10 @@ const Spinner = () => (
 )
 
 const Login = () => {
-  const [email, setEmail] = useState('')
+  // const [email, setEmail] = useState('')
   const [isLoading, setIsLoading] = useState<string | null>(null)
   const [error, setError] = useState<string | null>(null)
-  const {data: session, status} = useSession()
+  const {status} = useSession()
   const router = useRouter()
 
   useEffect(() => {
@@ -37,7 +37,7 @@ const Login = () => {
     setIsLoading(provider)
     try {
       await signIn(provider, {callbackUrl: '/dashboard'})
-    } catch (err: any) {
+    } catch (err) {
       console.error(`Login error with ${provider}:`, err)
       setError(`Login with ${provider} failed. Please try again.`)
       setIsLoading(null)
