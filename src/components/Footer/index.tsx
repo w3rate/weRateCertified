@@ -1,6 +1,6 @@
 import Link from 'next/link'
 export const Footer = () => (
-  <footer className="fixed bottom-[0px] left-[0px] z-[95] flex h-fit w-full items-center justify-center gap-[20px] border-t border-t-[#335] bg-[#151521] p-2 text-[#c4f] md:gap-[30px]">
+  <footer className="fixed bottom-[0px] left-[0px] z-[95] flex h-fit w-full items-center justify-center gap-[20px] bg-[#151521] p-2 text-[#c4f] md:gap-[30px]">
     <nav>
       <Link href="" className="group flex flex-col items-center gap-[8px] text-inherit no-underline">
         <img
