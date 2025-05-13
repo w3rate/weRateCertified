@@ -60,7 +60,7 @@ const Login = () => {
             message: messageContent,
             signature: signatureBs58,
             publicKey: publicKey.toBase58(),
-            callbackUrl: '/dashboard'
+            callbackUrl: '/onboarding'
           })
         } catch (err) {
           if (err instanceof Error) {
@@ -112,7 +112,7 @@ const Login = () => {
     setError(null)
     setIsLoading(provider)
     try {
-      await signIn(provider, {callbackUrl: '/dashboard'})
+      await signIn(provider, {callbackUrl: '/onboarding'})
     } catch (err) {
       if (err instanceof Error) {
         setError(`Login with ${provider} failed. ${err.message || 'Please try again.'}`)
