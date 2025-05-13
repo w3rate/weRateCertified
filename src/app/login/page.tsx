@@ -1,7 +1,10 @@
 'use client'
-import React, {useState, useEffect} from 'react'
-import {signIn, useSession} from 'next-auth/react'
+import React, {useState, useEffect, useCallback} from 'react'
+import {signIn, useSession, getCsrfToken} from 'next-auth/react'
 import {useRouter} from 'next/navigation'
+import {useWallet} from '@solana/wallet-adapter-react'
+import {useWalletModal} from '@solana/wallet-adapter-react-ui'
+import bs58 from 'bs58'
 
 const Spinner = () => (
   <svg
@@ -20,17 +23,90 @@ const Spinner = () => (
 )
 
 const Login = () => {
-  // const [email, setEmail] = useState('')
   const [isLoading, setIsLoading] = useState<string | null>(null)
   const [error, setError] = useState<string | null>(null)
   const {status} = useSession()
   const router = useRouter()
 
+  const {connected, publicKey, signMessage} = useWallet()
+  const {setVisible} = useWalletModal()
+  const [isAttemptingSolanaLogin, setIsAttemptingSolanaLogin] = useState(false)
+
+  const handleWalletLoginAttempt = useCallback(() => {
+    setError(null)
+    if (!connected) {
+      setIsAttemptingSolanaLogin(true)
+      setVisible(true)
+    } else if (publicKey && signMessage) {
+      setIsAttemptingSolanaLogin(true)
+    }
+  }, [connected, publicKey, signMessage, setVisible])
+
+  useEffect(() => {
+    if (isAttemptingSolanaLogin && connected && publicKey && signMessage) {
+      const executeSignIn = async () => {
+        setIsLoading('solana')
+        try {
+          const csrfToken = await getCsrfToken()
+          if (!csrfToken) {
+            throw new Error('Failed to get CSRF token.')
+          }
+          const messageContent = `Sign this message to log in to the app.\nNonce: ${csrfToken}`
+          const messageBytes = new TextEncoder().encode(messageContent)
+          const signatureBytes = await signMessage(messageBytes)
+          const signatureBs58 = bs58.encode(signatureBytes)
+
+          await signIn('credentials', {
+            message: messageContent,
+            signature: signatureBs58,
+            publicKey: publicKey.toBase58(),
+            callbackUrl: '/dashboard'
+          })
+        } catch (err) {
+          if (err instanceof Error) {
+            setError(`An error occurred: ${err.message || 'Unknown error during Solana sign-in.'}`)
+          }
+
+          setIsLoading(null)
+          setIsAttemptingSolanaLogin(false)
+        }
+      }
+      executeSignIn()
+    }
+  }, [isAttemptingSolanaLogin, connected, publicKey, signMessage, router])
+
   useEffect(() => {
     if (status === 'authenticated') {
+      setIsAttemptingSolanaLogin(false)
+      setIsLoading(null)
       router.push('/dashboard')
     }
   }, [status, router])
+
+  useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search)
+    const authError = urlParams.get('error')
+    if (authError && !error) {
+      const knownErrors: Record<string, string> = {
+        CredentialsSignin: 'Login failed. Please check your credentials or signature.',
+        OAuthSignin: 'Error signing in with OAuth provider.',
+        OAuthCallback: 'Error in OAuth callback.',
+        OAuthCreateAccount: 'Error creating account with OAuth provider.',
+        EmailCreateAccount: 'Error creating account with email.',
+        Callback: 'Error in callback handling.',
+        OAuthAccountNotLinked:
+          "This account is not linked. If you've signed in with this email before using a different method, try that method again.",
+        Default: 'An unknown login error occurred.'
+      }
+      setError(knownErrors[authError] || knownErrors.Default)
+      if (window.history.replaceState) {
+        const cleanURL = window.location.pathname
+        window.history.replaceState({}, document.title, cleanURL)
+      }
+      setIsLoading(null)
+      setIsAttemptingSolanaLogin(false)
+    }
+  }, [router, error])
 
   const handleSocialLogin = async (provider: 'google') => {
     setError(null)
@@ -38,13 +114,15 @@ const Login = () => {
     try {
       await signIn(provider, {callbackUrl: '/dashboard'})
     } catch (err) {
-      console.error(`Login error with ${provider}:`, err)
-      setError(`Login with ${provider} failed. Please try again.`)
+      if (err instanceof Error) {
+        setError(`Login with ${provider} failed. ${err.message || 'Please try again.'}`)
+      }
+
       setIsLoading(null)
     }
   }
 
-  if (status === 'loading') {
+  if (status === 'loading' && !isLoading) {
     return (
       <div className="flex h-screen items-center justify-center">
         <Spinner /> Loading session...
@@ -68,6 +146,7 @@ const Login = () => {
       {isLoading && (
         <div className="absolute inset-0 z-10 flex items-center justify-center rounded-3xl bg-black/30">
           <Spinner />
+          {isLoading === 'solana' ? 'Processing Solana login...' : 'Processing...'}
         </div>
       )}
 
@@ -96,13 +175,18 @@ const Login = () => {
         <button
           disabled={!!isLoading}
           className="button-social ring-offset-background focus-visible:ring-ring hover:border-werate-purple border-werate-tertiary bg-werate-tertiary/20 hover:bg-werate-tertiary/40 inline-flex h-9 w-full items-center justify-start gap-2 whitespace-nowrap rounded-full border px-3 py-2 text-sm font-medium text-white transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 sm:h-10 sm:px-4"
+          onClick={handleWalletLoginAttempt}
         >
-          {isLoading === 'google' ? (
+          {isLoading === 'solana' ? (
             <Spinner />
           ) : (
-            <img src="/wallet.svg" alt="Google" className="mr-3 h-5 w-5 invert" />
+            <img src="/wallet.svg" alt="Wallet" className="mr-3 h-5 w-5 invert" />
           )}
-          {isLoading === 'google' ? 'Redirecting...' : 'Wallet'}
+          {isLoading === 'solana'
+            ? 'Processing...'
+            : connected && publicKey
+              ? `Wallet (${publicKey.toBase58().substring(0, 4)}...${publicKey.toBase58().substring(publicKey.toBase58().length - 4)})`
+              : 'Connect Wallet'}
         </button>
       </div>
     </div>

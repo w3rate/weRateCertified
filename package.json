@@ -10,10 +10,16 @@
     "format": "prettier --write \"src/**/*.{js,jsx,ts,tsx,json}\""
   },
   "dependencies": {
+    "@solana/wallet-adapter-react": "^0.15.38",
+    "@solana/wallet-adapter-react-ui": "^0.9.38",
+    "@solana/wallet-adapter-wallets": "^0.19.36",
+    "bs58": "^6.0.0",
+    "firebase-admin": "^13.3.0",
     "next": "15.3.1",
     "next-auth": "^4.24.11",
     "react": "^19.1.0",
-    "react-dom": "^19.1.0"
+    "react-dom": "^19.1.0",
+    "tweetnacl": "^1.0.3"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3.3.1",
