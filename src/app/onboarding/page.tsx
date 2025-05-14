@@ -1,8 +1,56 @@
 'use client'
-import {useState} from 'react'
+import {useState, useCallback, useEffect} from 'react'
+import {useSession} from 'next-auth/react'
+import {useWallet} from '@solana/wallet-adapter-react'
+import {useWalletModal} from '@solana/wallet-adapter-react-ui'
+import {useRouter} from 'next/navigation'
 
 const Onboarding = () => {
   const [step, setStep] = useState(1)
+
+  const router = useRouter()
+
+  const {data: session, update} = useSession()
+  const {publicKey} = useWallet()
+  const [isProcessing, setIsProcessing] = useState(false)
+  const {setVisible} = useWalletModal()
+  const isConnected = session?.user?.solanaPublicKey
+
+  console.log(session)
+
+  const handleWalletUpdate = useCallback(async () => {
+    if (!publicKey || isProcessing) return
+
+    setIsProcessing(true)
+    try {
+      const updated = await update({
+        user: {
+          solanaPublicKey: publicKey.toString()
+        }
+      })
+
+      console.log('Session updated:', updated)
+
+      await fetch('/api/update-user', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({
+          userId: session?.user.email,
+          updates: {solanaPublicKey: publicKey.toString()}
+        })
+      })
+    } finally {
+      setIsProcessing(false)
+    }
+  }, [publicKey, session?.user?.id, update])
+
+  useEffect(() => {
+    if (session?.user.email) {
+      if (publicKey && !session?.user?.solanaPublicKey) {
+        handleWalletUpdate()
+      }
+    }
+  }, [publicKey, handleWalletUpdate, session])
 
   let currentStepTitle = ''
   if (step === 1) {
@@ -12,6 +60,43 @@ const Onboarding = () => {
   } else if (step === 3) {
     currentStepTitle = 'Final Step'
   }
+
+  const handleCompleteOnboarding = useCallback(async () => {
+    if (!session || !session.user || !session.user.id) {
+      console.error('Cannot complete onboarding: Session, user, or user ID is missing.')
+      return
+    }
+    if (isProcessing) return
+
+    setIsProcessing(true)
+    try {
+      const updatedSession = await update({
+        user: {
+          onboarded: true
+        }
+      })
+
+      console.log('Session updated with onboarded status:', updatedSession)
+
+      if (updatedSession?.user?.onboarded === true) {
+        await fetch('/api/update-user', {
+          method: 'POST',
+          headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify({
+            userId: session.user.id,
+            updates: {onboarded: true}
+          })
+        })
+        console.log('Onboarded status update sent to DB for user:', session.user.id)
+      } else {
+        console.warn('Session update did not reflect onboarded status change, or user ID missing for DB update.')
+      }
+    } catch (error) {
+      console.error('Error in handleCompleteOnboarding:', error)
+    } finally {
+      setIsProcessing(false)
+    }
+  }, [session, update, isProcessing])
 
   return (
     <div className="m-auto flex flex-col gap-[16px] md:w-[40%]">
@@ -31,15 +116,31 @@ const Onboarding = () => {
       >
         {step === 1 && (
           <>
-            <h3 className="text-[24px] font-[700] text-white">Wallet connected</h3>
+            <h3 className="text-[24px] font-[700] text-white">
+              {isConnected ? 'Wallet connected' : 'Wallet is not connected'}
+            </h3>
             <div className="flex w-full items-center gap-[10px] rounded-lg bg-[#3355] p-4">
-              <div className="flex h-[36px] w-[36px] items-center justify-center rounded-full bg-[#c4f5]">
-                <img src="/check.svg" width={20} height={20} alt="check" />
-              </div>
-              <div className="flex flex-col">
-                <span className="font-[500] text-white">Wallet successfully connected</span>
-                <span className="text-[14px] text-white/80">You can now continue with profile setup</span>
-              </div>
+              {isConnected && (
+                <>
+                  <div className="flex h-[36px] w-[36px] items-center justify-center rounded-full bg-[#c4f5]">
+                    <img src="/check.svg" width={20} height={20} alt="check" />
+                  </div>
+                  <div className="flex flex-col">
+                    <span className="font-[500] text-white">Wallet successfully connected</span>
+                    <span className="text-[14px] text-white/80">You can now continue with profile setup</span>
+                  </div>
+                </>
+              )}
+              {!isConnected && (
+                <div className="flex cursor-pointer items-center gap-[10px]" onClick={() => setVisible(true)}>
+                  <div className="flex h-[36px] w-[36px] items-center justify-center rounded-full bg-[#c4f5]">
+                    <img src="/info.svg" width={20} height={20} alt="check" />
+                  </div>
+                  <div className="flex flex-col">
+                    <span className="font-[500] text-white">Click here to connect your Solana wallet</span>
+                  </div>
+                </div>
+              )}
             </div>
             <button
               className="w-full rounded-full bg-[#c4f] p-2 text-[16px] font-[600] text-white"
@@ -55,22 +156,31 @@ const Onboarding = () => {
 
             <div className="mb-4 flex justify-center">
               <div className="flex h-24 w-24 cursor-pointer items-center justify-center rounded-full border-2 border-dashed border-slate-600 bg-slate-700/30 transition-colors hover:border-[#c4f]">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="24"
-                  height="24"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="#c4f"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  className="h-8 w-8 text-slate-300"
-                >
-                  <circle cx="12" cy="12" r="10"></circle>
-                  <path d="M8 12h8"></path>
-                  <path d="M12 8v8"></path>
-                </svg>
+                {session?.user.image ? (
+                  <img
+                    src={session?.user.image}
+                    className="h-full w-full rounded-full"
+                    alt="user"
+                    referrerPolicy="no-referrer"
+                  />
+                ) : (
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="24"
+                    height="24"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="#c4f"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    className="h-8 w-8 text-slate-300"
+                  >
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <path d="M8 12h8"></path>
+                    <path d="M12 8v8"></path>
+                  </svg>
+                )}
                 <span className="sr-only">Add Profile Picture</span>
               </div>
             </div>
@@ -81,7 +191,8 @@ const Onboarding = () => {
               <input
                 type="text"
                 className="flex h-10 w-full rounded-md border border-slate-600 bg-slate-700 px-3 py-2 text-base text-white placeholder-slate-400 ring-offset-[#181a26] file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#c4f] focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 md:text-sm"
-                placeholder="SolanaExplorer"
+                value={session?.user.email.split('@')[0]}
+                onChange={() => {}}
                 defaultValue=""
               />
             </div>
@@ -91,7 +202,8 @@ const Onboarding = () => {
               <input
                 type="email"
                 className="flex h-10 w-full rounded-md border border-slate-600 bg-slate-700 px-3 py-2 text-base text-white placeholder-slate-400 ring-offset-[#181a26] file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#c4f] focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 md:text-sm"
-                placeholder="your@email.com"
+                value={session?.user.email}
+                onChange={() => {}}
                 defaultValue=""
               />
               <p className="mt-1 text-xs text-slate-300">{`We'll only use this for important account notifications`}</p>
@@ -207,8 +319,8 @@ const Onboarding = () => {
             <button
               className="w-full rounded-full bg-[#c4f] p-2 text-[16px] font-[600] text-white"
               onClick={() => {
-                alert('Start Rating Clicked!')
-              }} // Пример действия
+                handleCompleteOnboarding().then(() => router.push('/'))
+              }}
             >
               START RATING
             </button>

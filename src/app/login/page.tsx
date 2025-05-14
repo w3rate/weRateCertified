@@ -25,7 +25,7 @@ const Spinner = () => (
 const Login = () => {
   const [isLoading, setIsLoading] = useState<string | null>(null)
   const [error, setError] = useState<string | null>(null)
-  const {status} = useSession()
+  const {status, data: session} = useSession()
   const router = useRouter()
 
   const {connected, publicKey, signMessage} = useWallet()
@@ -60,7 +60,7 @@ const Login = () => {
             message: messageContent,
             signature: signatureBs58,
             publicKey: publicKey.toBase58(),
-            callbackUrl: '/onboarding'
+            redirect: false
           })
         } catch (err) {
           if (err instanceof Error) {
@@ -76,12 +76,13 @@ const Login = () => {
   }, [isAttemptingSolanaLogin, connected, publicKey, signMessage, router])
 
   useEffect(() => {
-    if (status === 'authenticated') {
+    if (status === 'authenticated' && session?.user) {
       setIsAttemptingSolanaLogin(false)
       setIsLoading(null)
-      router.push('/dashboard')
+      const userOnboarded = (session.user as {onboarded?: boolean}).onboarded
+      router.push(userOnboarded ? '/' : '/onboarding')
     }
-  }, [status, router])
+  }, [status, session, router])
 
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search)
@@ -112,7 +113,7 @@ const Login = () => {
     setError(null)
     setIsLoading(provider)
     try {
-      await signIn(provider, {callbackUrl: '/onboarding'})
+      await signIn(provider, {redirect: false})
     } catch (err) {
       if (err instanceof Error) {
         setError(`Login with ${provider} failed. ${err.message || 'Please try again.'}`)

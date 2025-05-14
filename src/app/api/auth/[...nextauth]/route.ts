@@ -1,4 +1,4 @@
-import NextAuth, {NextAuthOptions, User as NextAuthUser, Account, Profile} from 'next-auth'
+import NextAuth, {NextAuthOptions} from 'next-auth'
 import GoogleProvider from 'next-auth/providers/google'
 import CredentialsProvider from 'next-auth/providers/credentials'
 import {
@@ -82,13 +82,13 @@ const authOptions: NextAuthOptions = {
     signIn: '/login'
   },
   callbacks: {
-    async signIn({user, account, profile}: {user: NextAuthUser; account: Account | null; profile?: Profile}) {
+    async signIn({user, account, profile}) {
       if (!db) {
         return true
       }
       try {
-        let userRef
-        const userData: {[key: string]: string | Date | null | undefined | boolean} = {
+        let docId: string
+        const providerDataToStore: {[key: string]: string | null | undefined | Date | boolean} = {
           name: user.name || null,
           email: user.email || null,
           image: user.image || null,
@@ -96,65 +96,97 @@ const authOptions: NextAuthOptions = {
           lastLogin: new Date()
         }
 
-        if (account?.provider === 'google' && profile?.sub) {
-          userRef = db.collection('users').doc(profile.sub)
-          userData.providerAccountId = profile.sub
-          if ((profile as {email_verified?: boolean})?.email_verified !== undefined) {
-            userData.emailVerified = (profile as {email_verified: boolean}).email_verified
-          }
-        } else if (account?.provider === 'credentials' && user.id) {
-          userRef = db.collection('users').doc(user.id)
-          userData.providerAccountId = user.id
-          userData.solanaPublicKey = user.id
+        if (account?.provider === 'google') {
+          docId = profile?.email || ''
+        } else if (account?.provider === 'credentials') {
+          docId = user.id!
+          providerDataToStore.solanaPublicKey = user.id
         } else {
           return false
         }
 
+        const userRef = db.collection('users').doc(docId)
         const docSnap = await userRef.get()
+
         if (!docSnap.exists) {
-          userData.createdAt = new Date()
-          await userRef.set(userData)
+          providerDataToStore.createdAt = new Date()
+          providerDataToStore.onboarded = false // Инициализация для нового пользователя
+          if (account?.provider === 'google') {
+            providerDataToStore.solanaPublicKey = null
+          }
+          await userRef.set(providerDataToStore)
         } else {
-          await userRef.update(userData)
+          // onboarded не обновляется здесь при обычном входе,
+          // только основные данные профиля и lastLogin
+          await userRef.update(providerDataToStore)
         }
         return true
       } catch (error) {
-        console.log(error)
+        console.log('NextAuth signIn callback error:', error)
         return false
       }
     },
-    async jwt({token, user, account, profile}) {
-      if (user) {
-        token.provider = account?.provider
-        if (account?.provider === 'google' && profile?.sub) {
-          token.userId = profile.sub
-        } else if (account?.provider === 'credentials' && user.id) {
-          token.userId = user.id
+
+    async jwt({token, user, account, profile, trigger, session}) {
+      if (user && account) {
+        token.provider = account.provider
+        if (account.provider === 'google') {
+          token.sub = profile?.email || profile?.sub
+          token.email = profile?.email || user?.email
+          token.name = profile?.name || user?.name
+          token.picture = profile?.image || user?.image
+        } else if (account.provider === 'credentials') {
+          token.sub = user.id
           token.solanaPublicKey = user.id
         }
       }
-      return token
-    },
-    async session({session, token}) {
-      const sessionUser = session.user as {
-        id?: string
-        provider?: string
-        solanaPublicKey?: string
-        name?: string | null
-        email?: string | null
-        image?: string | null
+
+      if (db && token.sub) {
+        try {
+          const userDoc = await db
+            .collection('users')
+            .doc(token.sub as string)
+            .get()
+          if (userDoc.exists) {
+            const dbData = userDoc.data()
+            token.name = dbData?.name ?? token.name
+            token.email = dbData?.email ?? token.email
+            token.picture = dbData?.image ?? token.picture
+            token.solanaPublicKey = dbData?.solanaPublicKey ?? token.solanaPublicKey
+            token.onboarded = dbData?.onboarded == true
+          }
+        } catch (e) {
+          console.error(e)
+        }
       }
 
-      if (token.userId) {
-        sessionUser.id = token.userId as string
+      if (trigger === 'update' && session?.user) {
+        const updates = session.user as Record<string, string>
+        if (typeof updates.name !== 'undefined') token.name = updates.name
+        if (typeof updates.email !== 'undefined') token.email = updates.email
+        if (typeof updates.image !== 'undefined') token.picture = updates.image
+        if (typeof updates.provider !== 'undefined') token.provider = updates.provider
+        if (typeof updates.providerAccountId !== 'undefined') token.providerAccountId = updates.providerAccountId
+        if (typeof updates.solanaPublicKey !== 'undefined') token.solanaPublicKey = updates.solanaPublicKey
+        if (typeof updates.createdAt !== 'undefined') token.createdAt = updates.createdAt
+        if (typeof updates.lastLogin !== 'undefined') token.lastLogin = updates.lastLogin
+        if (typeof updates.onboarded === 'boolean') token.onboarded = updates.onboarded // Обновление onboarded
       }
-      if (token.provider) {
-        sessionUser.provider = token.provider as string
-      }
-      if (token.solanaPublicKey) {
-        sessionUser.solanaPublicKey = token.solanaPublicKey as string
-      }
-      return session
+      return token
+    },
+
+    async session({session: clientSession, token}) {
+      const userSessionData: Record<string, string | null | boolean> = {}
+      if (token.sub) userSessionData.id = token.sub
+      userSessionData.name = token.name ?? null
+      userSessionData.email = token.email ?? null
+      userSessionData.image = token.picture ?? null
+      if (token.provider) userSessionData.provider = token.provider
+      userSessionData.solanaPublicKey = token.solanaPublicKey ?? null
+      userSessionData.onboarded = token.onboarded == true // Передача в сессию
+
+      clientSession.user = userSessionData
+      return clientSession
     }
   }
 }
