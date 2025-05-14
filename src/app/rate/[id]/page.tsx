@@ -1,8 +1,9 @@
 'use client'
 
 import Link from 'next/link'
-import {use, useState, ChangeEvent, FormEvent} from 'react'
+import {use, useState, ChangeEvent, FormEvent, useEffect} from 'react'
 import {allProjectsData} from '@/components/constants'
+import {useRouter} from 'next/navigation'
 
 interface ProjectCardData {
   id: number
@@ -21,6 +22,7 @@ interface RatingCategory {
 }
 
 const ProjectReviewPage = ({params: paramsPromise}: {params: Promise<{id: string}>}) => {
+  const router = useRouter()
   const resolvedParams = use(paramsPromise)
   const currentProjectId = parseInt(resolvedParams.id, 10)
   const projectFromData = allProjectsData.find((p) => p.id === currentProjectId) as ProjectCardData | undefined
@@ -33,6 +35,14 @@ const ProjectReviewPage = ({params: paramsPromise}: {params: Promise<{id: string
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false)
   const [submissionStatus, setSubmissionStatus] = useState<'success' | 'error' | null>(null)
   const [submissionMessage, setSubmissionMessage] = useState<string>('')
+
+  useEffect(() => {
+    if (submissionStatus == 'success') {
+      setTimeout(() => {
+        router.push('/')
+      }, 3000)
+    }
+  }, [submissionStatus])
 
   const handleOverallRating = (rating: number): void => {
     setOverallRating(rating)
@@ -262,6 +272,9 @@ const ProjectReviewPage = ({params: paramsPromise}: {params: Promise<{id: string
                 <div>
                   <div className="mb-2 flex items-center justify-between">
                     <h2 className="text-base font-medium text-white sm:text-lg">Add a comment</h2>
+                    <span className="greyscale cursor-wait rounded-lg border border-[#555] p-2 text-[#555]">
+                      Calculate Usefulness
+                    </span>
                   </div>
                   <textarea
                     value={comment}
@@ -344,7 +357,7 @@ const ProjectReviewPage = ({params: paramsPromise}: {params: Promise<{id: string
                     </>
                   ) : (
                     <>
-                      <img src="/send.svg" alt="Submit" className="h-4 w-4" />
+                      <img src="/fire.svg" alt="Submit" className="h-5 w-5 invert" />
                       Submit Rating
                     </>
                   )}
