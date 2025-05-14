@@ -4,6 +4,7 @@ import Link from 'next/link'
 import {use, useState, ChangeEvent, FormEvent, useEffect} from 'react'
 import {allProjectsData} from '@/components/constants'
 import {useRouter} from 'next/navigation'
+import {useSession} from 'next-auth/react'
 
 interface ProjectCardData {
   id: number
@@ -23,6 +24,7 @@ interface RatingCategory {
 
 const ProjectReviewPage = ({params: paramsPromise}: {params: Promise<{id: string}>}) => {
   const router = useRouter()
+  const {data: session} = useSession()
   const resolvedParams = use(paramsPromise)
   const currentProjectId = parseInt(resolvedParams.id, 10)
   const projectFromData = allProjectsData.find((p) => p.id === currentProjectId) as ProjectCardData | undefined
@@ -35,6 +37,23 @@ const ProjectReviewPage = ({params: paramsPromise}: {params: Promise<{id: string
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false)
   const [submissionStatus, setSubmissionStatus] = useState<'success' | 'error' | null>(null)
   const [submissionMessage, setSubmissionMessage] = useState<string>('')
+
+  let walletScore = ''
+  const wallet_score = async () =>
+    await fetch('https://weratereview.onrender.com/analyze_wallet', {
+      method: 'POST',
+      body: JSON.stringify({
+        wallet_address: session?.user.solanaPublicKey
+      })
+    }).then((r) => {
+      walletScore = String(r)
+    })
+
+  useEffect(() => {
+    if (session?.user.solanaPublicKey && !walletScore) {
+      wallet_score()
+    }
+  }, [session?.user.solanaPublicKey])
 
   useEffect(() => {
     if (submissionStatus == 'success') {
@@ -272,7 +291,7 @@ const ProjectReviewPage = ({params: paramsPromise}: {params: Promise<{id: string
                 <div>
                   <div className="mb-2 flex items-center justify-between">
                     <h2 className="text-base font-medium text-white sm:text-lg">Add a comment</h2>
-                    <span className="greyscale cursor-wait rounded-lg border border-[#555] p-2 text-[#555]">
+                    <span className="greyscale rounded-lg border border-[#555] p-2 text-[#555]">
                       Calculate Usefulness
                     </span>
                   </div>
@@ -305,14 +324,14 @@ const ProjectReviewPage = ({params: paramsPromise}: {params: Promise<{id: string
                           paddingRight: '2.5rem'
                         }}
                       >
-                        <option value="">Select wallet or add new</option>
+                        <option value="">{session?.user.solanaPublicKey || 'Select wallet or add new'}</option>
                       </select>
                       <button
                         type="button"
                         className="flex transform items-center justify-center gap-2 rounded-full border border-[#C94EFF]/80 bg-transparent px-4 py-2 text-sm font-medium text-[#C94EFF] transition-all duration-300 hover:scale-105 hover:bg-[#C94EFF]/10 sm:px-5"
                       >
                         <img src="/wallet.svg" alt="Wallet" className="filter_purple_for_icons h-4 w-4" />
-                        Add Wallet
+                        {walletScore || 'Add Wallet'}
                       </button>
                     </div>
                   </div>
