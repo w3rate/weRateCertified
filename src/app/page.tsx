@@ -5,6 +5,8 @@ import ProjectCard from '@/components/ui/ProjectCard'
 import Disclaimer from '@/components/ui/Disclaimer'
 import {featuredProjectsData, allProjectsData} from '../components/constants'
 
+export const dynamic = 'force-dynamic'
+
 interface FeatureData {
   title: string
   text: string
