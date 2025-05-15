@@ -31,7 +31,6 @@ const featureCardsData: FeatureData[] = [
 const VERCEL_DEPLOYMENT_URL = process.env.VERCEL_PROJECT_PRODUCTION_URL
 const BASE_URL = VERCEL_DEPLOYMENT_URL ? `https://${VERCEL_DEPLOYMENT_URL}` : 'http://localhost:3000'
 
-
 export default async function Home() {
   const featuredForDisplay = featuredProjectsData
   const allForDisplay = allProjectsData
@@ -82,7 +81,12 @@ export default async function Home() {
               </div>
               <ProjectGrid>
                 {featuredForDisplay.map((project) => (
-                  <ProjectCard key={`featured-${project.id}`} {...project} isFeatured={true} rating={ratingsData[project.id]} />
+                  <ProjectCard
+                    key={`featured-${project.id}`}
+                    {...project}
+                    isFeatured={true}
+                    rating={ratingsData[project.id]}
+                  />
                 ))}
               </ProjectGrid>
             </div>
@@ -97,7 +101,7 @@ export default async function Home() {
               </h2>
               <ProjectGrid>
                 {allForDisplay.map((project) => (
-                  <ProjectCard key={`all-${project.id}`} {...project} rating={ratingsData[project.id]}/>
+                  <ProjectCard key={`all-${project.id}`} {...project} rating={ratingsData[project.id]} />
                 ))}
               </ProjectGrid>
             </div>

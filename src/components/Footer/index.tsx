@@ -42,7 +42,10 @@ export const Footer = () => (
       </Link>
     </nav>
     <nav>
-      <Link href="https://www.werate.io/" className="group flex flex-col items-center gap-[8px] text-inherit no-underline">
+      <Link
+        href="https://www.werate.io/"
+        className="group flex flex-col items-center gap-[8px] text-inherit no-underline"
+      >
         <img
           src="/getApp.svg"
           width={24}
