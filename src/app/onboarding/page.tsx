@@ -1,12 +1,10 @@
 'use client'
 import {useState, useCallback, useEffect, ChangeEvent} from 'react'
-import {useSession, SessionContextValue} from 'next-auth/react' // Assuming User is defined in next-auth.d.ts
+import {useSession, SessionContextValue} from 'next-auth/react'
 import {useWallet, WalletContextState} from '@solana/wallet-adapter-react'
 import {useWalletModal, WalletModalContextState} from '@solana/wallet-adapter-react-ui'
 import {useRouter} from 'next/navigation'
 import {PublicKey} from '@solana/web3.js'
-// Make sure User is correctly defined in your next-auth.d.ts to include these custom fields
-// import { User } from 'next-auth' // Or your custom path if User is extended elsewhere
 
 interface UserProfileUpdates {
   name?: string | null
@@ -97,7 +95,6 @@ const Onboarding = () => {
     }
 
     try {
-      // Ensure UserProfileUpdates is compatible with Partial<Session['user']> based on your next-auth.d.ts
       const updatedSession = await update({user: profileUpdates})
       console.log('Session updated with profile info:', updatedSession)
 
@@ -333,7 +330,6 @@ const Onboarding = () => {
                   <button
                     key={interest}
                     onClick={() => {
-                      // 'e' parameter removed here
                       setSelectedInterests((prev: string[]) =>
                         prev.includes(interest) ? prev.filter((i: string) => i !== interest) : [...prev, interest]
                       )

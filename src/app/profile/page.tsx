@@ -1,11 +1,9 @@
-// components/UserProfilePage.js
-'use client' // Необходимо для использования хуков useState, useEffect и next-auth/react
+'use client'
 
 import Image from 'next/image'
-import {signOut} from 'next-auth/react' // Импорт для выхода из системы
-import {useState} from 'react' // Для управления состоянием вкладок (пример)
+import {signOut} from 'next-auth/react'
+import {useState} from 'react'
 
-// --- SVG Icon Components (Inlined) ---
 const PenIcon = ({className}: {className?: string}) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
@@ -119,11 +117,10 @@ const WalletIcon = ({className}: {className?: string}) => (
     <path d="M3 5v14a2 2 0 0 0 2 2h15a1 1 0 0 0 1-1v-4"></path>
   </svg>
 )
-// --- End SVG Icon Components ---
 
 const UserProfilePage = () => {
   const primaryColor = '#C94EFF'
-  const [activeTab, setActiveTab] = useState('projects') // Пример управления состоянием вкладок
+  const [activeTab, setActiveTab] = useState('projects')
 
   const handleSignOut = async () => {
     await signOut({callbackUrl: '/'})

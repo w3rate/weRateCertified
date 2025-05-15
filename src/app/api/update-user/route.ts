@@ -5,7 +5,6 @@ export async function POST(request: Request) {
   try {
     const {userId, updates} = await request.json()
 
-    // Валидация входных данных
     if (!userId || typeof userId !== 'string') {
       return NextResponse.json({success: false, error: 'Valid userId is required'}, {status: 400})
     }
@@ -14,7 +13,6 @@ export async function POST(request: Request) {
       return NextResponse.json({success: false, error: 'Updates object is required'}, {status: 400})
     }
 
-    // Обновляем документ в Firestore
     await db
       .collection('users')
       .doc(userId)

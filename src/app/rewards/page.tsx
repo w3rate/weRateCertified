@@ -1,9 +1,7 @@
-// components/RewardsPage.js
 'use client'
 
 import Image from 'next/image'
 
-// --- SVG Icon Components ---
 const ZapIcon = ({className}: {className?: string}) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
@@ -243,18 +241,16 @@ const ExternalLinkIcon = ({className}: {className?: string}) => (
     <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
   </svg>
 )
-// --- End SVG Icon Components ---
 
 const RewardsPage = () => {
   const primaryColor = '#C94EFF'
   const currentXP = 25
   const nextLevelXP = 2000
-  const xpForNextLevel = 1000 // Example: XP needed for the current level up
-  const xpDeficit = currentXP - xpForNextLevel // If negative, it's needed. If positive, it's surplus for current level.
-  // Original shows -975 XP and 1000 XP needed. So 25 XP gained, 1000 total for level.
+  const xpForNextLevel = 1000
+  const xpDeficit = currentXP - xpForNextLevel
+
   const progressPercentage = (currentXP / nextLevelXP) * 100
 
-  // Mock data for auction items - replace with actual data fetching
   const auctionItems = [
     {
       id: 1,
@@ -341,7 +337,6 @@ const RewardsPage = () => {
       <div className="mx-auto max-w-lg pb-[10px] pt-6">
         <h1 className="mb-6 text-center text-2xl font-bold text-white">Rewards</h1>
 
-        {/* Experience Card */}
         <div
           className={`relative rounded-xl bg-neutral-800 shadow-lg shadow-[${primaryColor}]/20 ring-1 ring-[${primaryColor}]/30 mb-6`}
         >
@@ -398,7 +393,6 @@ const RewardsPage = () => {
           </div>
         </div>
 
-        {/* Daily Streak Card */}
         <div
           className={`relative rounded-xl bg-neutral-800 shadow-lg shadow-[${primaryColor}]/20 ring-1 ring-[${primaryColor}]/30 mb-6`}
         >
@@ -450,7 +444,6 @@ const RewardsPage = () => {
           </div>
         </div>
 
-        {/* Project Spotlight Auction Card */}
         <div
           className={`relative rounded-xl bg-neutral-800 shadow-lg shadow-[${primaryColor}]/20 ring-1 ring-[${primaryColor}]/30 mb-6`}
         >
@@ -538,7 +531,6 @@ const RewardsPage = () => {
           </div>
         </div>
 
-        {/* Solana Token Rewards Card */}
         <div
           className={`relative rounded-xl bg-neutral-800 shadow-lg shadow-[${primaryColor}]/20 ring-1 ring-[${primaryColor}]/30 mb-6`}
         >
@@ -603,7 +595,6 @@ const RewardsPage = () => {
           </div>
         </div>
 
-        {/* Earn Rewards Card */}
         <div
           className={`relative rounded-xl bg-neutral-800 shadow-lg shadow-[${primaryColor}]/20 ring-1 ring-[${primaryColor}]/30 mb-6`}
         >
@@ -646,7 +637,6 @@ const RewardsPage = () => {
           </div>
         </div>
 
-        {/* Leaderboard Preview Card */}
         <div
           className={`relative rounded-xl bg-neutral-800 shadow-lg shadow-[${primaryColor}]/20 ring-1 ring-[${primaryColor}]/30 mb-6`}
         >
@@ -710,7 +700,6 @@ const RewardsPage = () => {
         </div>
       </div>
 
-      {/* Bottom Navigation Bar */}
       <div className="fixed bottom-0 left-0 right-0 z-10 border-t border-neutral-700 bg-neutral-900 p-2">
         <div className="mx-auto flex max-w-lg items-center justify-around">
           <a
@@ -718,7 +707,6 @@ const RewardsPage = () => {
             href="/discover"
           >
             {' '}
-            {/* Assuming /discover is the path */}
             <div className={`h-6 w-6 text-neutral-400 group-hover:text-[${primaryColor}]`}>
               <SearchIcon />
             </div>
@@ -726,7 +714,6 @@ const RewardsPage = () => {
           </a>
           <a className={`flex flex-col items-center p-2 text-[${primaryColor}]`} href="/rewards">
             {' '}
-            {/* Active Link */}
             <div className={`h-6 w-6 text-[${primaryColor}]`}>
               <TrophyIcon className="h-6 w-6" />
             </div>

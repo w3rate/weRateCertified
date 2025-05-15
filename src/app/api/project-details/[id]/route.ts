@@ -1,4 +1,3 @@
-// app/api/project-details/[id]/route.ts
 import {NextResponse, type NextRequest} from 'next/server'
 import {initializeApp, getApps, cert} from 'firebase-admin/app'
 import {getFirestore, type Firestore} from 'firebase-admin/firestore'

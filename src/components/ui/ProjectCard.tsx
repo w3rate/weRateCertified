@@ -16,7 +16,6 @@ export interface ProjectCardProps {
 }
 
 const ProjectCard = ({
-  // id,
   href,
   title,
   rating,

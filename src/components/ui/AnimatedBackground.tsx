@@ -1,16 +1,11 @@
-// src/app/components/ui/AnimatedBackground.tsx
-// Версия, максимально точно повторяющая оригинальный HTML фона
-
 import React from 'react'
 
 const AnimatedBackground: React.FC = () => {
-  // Значения стилей взяты напрямую из оригинального HTML
   const originalBackgroundColor = 'rgb(26, 31, 44)'
   const originalGradientColor = 'rgba(201, 78, 255, 0.4)'
   const originalOverlayColor = 'rgba(21, 21, 33, 0.5)'
 
   return (
-    // 1. Основной контейнер фона
     <div
       className="fixed inset-0 z-[-1] overflow-hidden"
       style={{
@@ -20,7 +15,6 @@ const AnimatedBackground: React.FC = () => {
         backgroundColor: originalBackgroundColor
       }}
     >
-      {/* 2. Оверлей */}
       <div
         className="absolute inset-0"
         style={{
@@ -29,27 +23,18 @@ const AnimatedBackground: React.FC = () => {
         }}
       />
 
-      {/* 3. Звезды - ТОЧНАЯ копия структуры и стилей из оригинала */}
-      {/* УБЕДИТЕСЬ, что @keyframes glow-pulse определен в CSS! */}
-
-      {/* Star 1 */}
       <div
-        className="animate-glow-pulse pointer-events-none absolute right-20 top-20 z-[-1] mix-blend-screen" // Классы как в оригинале
+        className="animate-glow-pulse pointer-events-none absolute right-20 top-20 z-[-1] mix-blend-screen"
         style={{
-          width: '120px', // Inline стили как в оригинале
+          width: '120px',
           height: '120px',
           transform: 'rotate(183deg)',
           transition: 'transform 0.05s linear'
         }}
       >
-        <img
-          src="/star.svg" // Путь к вашей звезде
-          alt="Glow Star"
-          className="h-full w-full object-contain opacity-80" // Классы для img как в оригинале
-        />
+        <img src="/star.svg" alt="Glow Star" className="h-full w-full object-contain opacity-80" />
       </div>
 
-      {/* Star 2 */}
       <div
         className="animate-glow-pulse pointer-events-none absolute bottom-20 left-20 z-[-1] mix-blend-screen"
         style={{
@@ -62,7 +47,6 @@ const AnimatedBackground: React.FC = () => {
         <img src="/star.svg" alt="Glow Star" className="h-full w-full object-contain opacity-80" />
       </div>
 
-      {/* Star 3 */}
       <div
         className="animate-glow-pulse pointer-events-none absolute left-10 top-10 z-[-1] mix-blend-screen"
         style={{
@@ -75,7 +59,6 @@ const AnimatedBackground: React.FC = () => {
         <img src="/star.svg" alt="Glow Star" className="h-full w-full object-contain opacity-80" />
       </div>
 
-      {/* Star 4 */}
       <div
         className="animate-glow-pulse pointer-events-none absolute bottom-10 right-10 z-[-1] mix-blend-screen"
         style={{
@@ -88,16 +71,14 @@ const AnimatedBackground: React.FC = () => {
         <img src="/star.svg" alt="Glow Star" className="h-full w-full object-contain opacity-80" />
       </div>
 
-      {/* Star 5 */}
       <div
-        // Используем классы Tailwind для позиционирования как в оригинале
         className="animate-glow-pulse pointer-events-none absolute left-20 top-1/2 z-[-1] -translate-y-1/2 mix-blend-screen"
         style={{
-          width: '50px', // Ширина/высота
+          width: '50px',
           height: '50px',
-          // transform ТОЛЬКО для rotate, так как translate уже задан классами
+
           transform: 'rotate(180deg)',
-          transition: 'transform 0.05s linear' // transition
+          transition: 'transform 0.05s linear'
         }}
       >
         <img src="/star.svg" alt="Glow Star" className="h-full w-full object-contain opacity-80" />

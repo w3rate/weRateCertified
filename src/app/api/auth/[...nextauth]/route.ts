@@ -110,14 +110,12 @@ const authOptions: NextAuthOptions = {
 
         if (!docSnap.exists) {
           providerDataToStore.createdAt = new Date()
-          providerDataToStore.onboarded = false // Инициализация для нового пользователя
+          providerDataToStore.onboarded = false
           if (account?.provider === 'google') {
             providerDataToStore.solanaPublicKey = null
           }
           await userRef.set(providerDataToStore)
         } else {
-          // onboarded не обновляется здесь при обычном входе,
-          // только основные данные профиля и lastLogin
           await userRef.update(providerDataToStore)
         }
         return true
@@ -170,7 +168,7 @@ const authOptions: NextAuthOptions = {
         if (typeof updates.solanaPublicKey !== 'undefined') token.solanaPublicKey = updates.solanaPublicKey
         if (typeof updates.createdAt !== 'undefined') token.createdAt = updates.createdAt
         if (typeof updates.lastLogin !== 'undefined') token.lastLogin = updates.lastLogin
-        if (typeof updates.onboarded === 'boolean') token.onboarded = updates.onboarded // Обновление onboarded
+        if (typeof updates.onboarded === 'boolean') token.onboarded = updates.onboarded
       }
       return token
     },
@@ -183,7 +181,7 @@ const authOptions: NextAuthOptions = {
       userSessionData.image = token.picture ?? null
       if (token.provider) userSessionData.provider = token.provider
       userSessionData.solanaPublicKey = token.solanaPublicKey ?? null
-      userSessionData.onboarded = token.onboarded == true // Передача в сессию
+      userSessionData.onboarded = token.onboarded == true
 
       clientSession.user = userSessionData
       return clientSession

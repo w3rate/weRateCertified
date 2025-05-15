@@ -1,32 +1,28 @@
 'use client'
 
 import Link from 'next/link'
-import {use, useState, useEffect} from 'react' // Добавлены useState и useEffect
+import {use, useState, useEffect} from 'react'
 import {allProjectsData} from '@/components/constants'
 
-// Интерфейс для статических данных проекта
 interface ProjectCardData {
   id: number
-  href: string // URL проекта для "Visit Website"
+  href: string
   title: string
-  rating: number // Это будет заменено данными из Firestore
+  rating: number
   description: string
   tags: string[]
   blockchain: string
   img: string
-  // Добавьте сюда поля для whitepaper и chart, если они есть в allProjectsData
+
   whitepaperUrl?: string
   chartUrl?: string
 }
 
-// Интерфейсы для данных, получаемых от API (из Firestore)
 interface FirestoreReview {
   overallRating: number
   comment: string
   submittedAt: string
-  selectedWallet?: string // Кошелек пользователя, если сохраняется
-  // userHandle, badges и userBadges - это сложные поля из вашего статического примера.
-  // Если они не сохраняются в Firestore, их нужно будет опустить или адаптировать.
+  selectedWallet?: string
 }
 
 interface FirestoreRatingBreakdownCategory {
@@ -36,16 +32,15 @@ interface FirestoreRatingBreakdownCategory {
 }
 
 interface FirestoreProjectData {
-  name?: string // Название проекта из Firestore (может переопределить projectStaticData.title)
+  name?: string
   totalAverageRating?: number
   reviewCount?: number
   detailedRatingBreakdown?: {
     [categoryKey: string]: FirestoreRatingBreakdownCategory
   }
-  ratings?: FirestoreReview[] // Массив отзывов
+  ratings?: FirestoreReview[]
 }
 
-// Для отображения Rating Breakdown
 const categoryDisplayMapping = [
   {key: 'team', label: 'Team'},
   {key: 'codebase_security', label: 'Codebase / Security'},
@@ -54,7 +49,6 @@ const categoryDisplayMapping = [
   {key: 'moon_potential', label: 'Moon Potential'}
 ]
 
-// Утилита для форматирования даты
 const formatDateAgo = (isoDateString?: string): string => {
   if (!isoDateString) return 'some time ago'
   try {
@@ -71,7 +65,7 @@ const formatDateAgo = (isoDateString?: string): string => {
     const diffDays = Math.floor(diffHours / 24)
     if (diffDays < 7) return `${diffDays}d ago`
     const diffWeeks = Math.floor(diffDays / 7)
-    if (diffWeeks < 5) return `${diffWeeks}w ago` // Примерно до месяца
+    if (diffWeeks < 5) return `${diffWeeks}w ago`
     const diffMonths = Math.floor(diffDays / 30.44)
     if (diffMonths < 12) return `${diffMonths}mo ago`
     const diffYears = Math.floor(diffDays / 365.25)
@@ -134,23 +128,20 @@ const ProjectRatingPage = ({params: paramsPromise}: {params: Promise<{id: string
     return <div className="pt-10 text-center text-white">Loading project data...</div>
   }
 
-  // Данные для отображения (приоритет Firestore, затем статические, затем заглушки)
   const displayTitle = firestoreData?.name || projectStaticData?.title || 'Project Title'
   const displayImg = projectStaticData?.img || '/default-project-image.png'
   const displayDescription = projectStaticData?.description || 'No description available.'
   const displayTags = projectStaticData?.tags || []
   const websiteUrl = projectStaticData?.href || '#'
-  const whitepaperUrl = projectStaticData?.whitepaperUrl // Добавьте в allProjectsData
-  const chartUrl = projectStaticData?.chartUrl // Добавьте в allProjectsData
+  const whitepaperUrl = projectStaticData?.whitepaperUrl
+  const chartUrl = projectStaticData?.chartUrl
 
   const ratingDisplayValue =
     typeof firestoreData?.totalAverageRating === 'number' ? firestoreData.totalAverageRating.toFixed(1) : 'N/A'
   const totalReviews = firestoreData?.reviewCount || 0
 
-  // API уже сортирует, берем первые 3
   const recentReviewsToDisplay = firestoreData?.ratings?.slice(0, 3) || []
 
-  // Эти ссылки лучше брать из projectStaticData или firestoreData если они специфичны для проекта
   const staticSocialLinks = [
     {name: 'Twitter', url: 'https://twitter.com/example', imageUrl: '/x.svg'},
     {name: 'Github', url: 'https://github.com/example', imageUrl: '/github.svg'},
@@ -193,9 +184,8 @@ const ProjectRatingPage = ({params: paramsPromise}: {params: Promise<{id: string
             </div>
           )}
 
-          {!projectStaticData && !loading ? null : ( // Показываем карточки если есть статические данные или еще не было ошибки
+          {!projectStaticData && !loading ? null : (
             <>
-              {/* --- Project Info Card --- */}
               <div className="relative mb-4 rounded-xl p-4 shadow-lg shadow-[#C94EFF]/20 ring-1 ring-[#C94EFF]/30 sm:mb-6 sm:p-6">
                 <div className="absolute -inset-1 -z-10 rounded-xl bg-[#C94EFF]/10 blur-md"></div>
                 <div className="relative">
@@ -290,7 +280,6 @@ const ProjectRatingPage = ({params: paramsPromise}: {params: Promise<{id: string
                 </div>
               </div>
 
-              {/* --- Rating Breakdown Card --- */}
               <div className="relative mb-4 rounded-xl p-4 shadow-lg shadow-[#C94EFF]/20 ring-1 ring-[#C94EFF]/30 sm:mb-6 sm:p-6">
                 <div className="absolute -inset-1 -z-10 rounded-xl bg-[#C94EFF]/10 blur-md"></div>
                 <div className="relative">
@@ -345,7 +334,6 @@ const ProjectRatingPage = ({params: paramsPromise}: {params: Promise<{id: string
                 </div>
               </div>
 
-              {/* --- Recent Reviews Card --- */}
               <div className="relative rounded-xl p-4 shadow-lg shadow-[#C94EFF]/20 ring-1 ring-[#C94EFF]/30 sm:p-6">
                 <div className="absolute -inset-1 -z-10 rounded-xl bg-[#C94EFF]/10 blur-md"></div>
                 <div className="relative">
@@ -426,7 +414,6 @@ const ProjectRatingPage = ({params: paramsPromise}: {params: Promise<{id: string
         </div>
       </div>
 
-      {/* Bottom Nav Bar */}
       <div className="fixed bottom-0 left-0 right-0 z-10 border-t border-gray-700 bg-[#101014] p-2">
         <div className="mx-auto flex max-w-lg items-center justify-around">
           <Link className="flex flex-col items-center p-2 text-gray-400 hover:text-[#C94EFF]" href="/">

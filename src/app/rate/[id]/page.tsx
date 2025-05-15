@@ -116,12 +116,6 @@ const ProjectReviewPage = ({params: paramsPromise}: {params: Promise<{id: string
       if (response.ok && result.success) {
         setSubmissionStatus('success')
         setSubmissionMessage(result.message || 'Review submitted successfully!')
-        // Optionally reset form fields here
-        // setOverallRating(0)
-        // setUsageDuration('')
-        // setDetailedRatings({})
-        // setComment('')
-        // setSelectedWallet('')
       } else {
         setSubmissionStatus('error')
         setSubmissionMessage(result.error || result.details || 'Failed to submit review.')
