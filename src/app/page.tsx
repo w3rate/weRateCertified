@@ -28,9 +28,17 @@ const featureCardsData: FeatureData[] = [
   }
 ]
 
-export default function Home() {
+const VERCEL_DEPLOYMENT_URL = process.env.VERCEL_PROJECT_PRODUCTION_URL
+const BASE_URL = VERCEL_DEPLOYMENT_URL ? `https://${VERCEL_DEPLOYMENT_URL}` : 'http://localhost:3000'
+
+
+export default async function Home() {
   const featuredForDisplay = featuredProjectsData
   const allForDisplay = allProjectsData
+
+  const ratings = async () => await (await fetch(`${BASE_URL}/api/projects-ratings`)).json()
+
+  const ratingsData = await ratings()
 
   return (
     <main>
@@ -74,7 +82,7 @@ export default function Home() {
               </div>
               <ProjectGrid>
                 {featuredForDisplay.map((project) => (
-                  <ProjectCard key={`featured-${project.id}`} {...project} isFeatured={true} />
+                  <ProjectCard key={`featured-${project.id}`} {...project} isFeatured={true} rating={ratingsData[project.id]} />
                 ))}
               </ProjectGrid>
             </div>
@@ -89,7 +97,7 @@ export default function Home() {
               </h2>
               <ProjectGrid>
                 {allForDisplay.map((project) => (
-                  <ProjectCard key={`all-${project.id}`} {...project} />
+                  <ProjectCard key={`all-${project.id}`} {...project} rating={ratingsData[project.id]}/>
                 ))}
               </ProjectGrid>
             </div>

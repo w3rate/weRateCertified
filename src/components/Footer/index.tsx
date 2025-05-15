@@ -2,7 +2,7 @@ import Link from 'next/link'
 export const Footer = () => (
   <footer className="fixed bottom-[0px] left-[0px] z-[95] flex h-fit w-full items-center justify-center gap-[20px] bg-[#151521] p-2 text-[#c4f] md:gap-[30px]">
     <nav>
-      <Link href="" className="group flex flex-col items-center gap-[8px] text-inherit no-underline">
+      <Link href="/" className="group flex flex-col items-center gap-[8px] text-inherit no-underline">
         <img
           src="/search.svg"
           width={24}
@@ -16,7 +16,7 @@ export const Footer = () => (
     </nav>
 
     <nav>
-      <Link href="" className="group flex flex-col items-center gap-[8px] text-inherit no-underline">
+      <Link href="/rewards" className="group flex flex-col items-center gap-[8px] text-inherit no-underline">
         <img
           src="/rewards.svg"
           width={24}
@@ -29,7 +29,7 @@ export const Footer = () => (
       </Link>
     </nav>
     <nav>
-      <Link href="" className="group flex flex-col items-center gap-[8px] text-inherit no-underline">
+      <Link href="/profile" className="group flex flex-col items-center gap-[8px] text-inherit no-underline">
         <img
           src="/user.svg"
           width={24}
@@ -42,7 +42,7 @@ export const Footer = () => (
       </Link>
     </nav>
     <nav>
-      <Link href="" className="group flex flex-col items-center gap-[8px] text-inherit no-underline">
+      <Link href="https://www.werate.io/" className="group flex flex-col items-center gap-[8px] text-inherit no-underline">
         <img
           src="/getApp.svg"
           width={24}

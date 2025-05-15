@@ -8,7 +8,6 @@ export interface ProjectCardProps {
   href: string
   imageUrl?: string
   title: string
-  rating: number
   description: string
   tags: string[]
   blockchain: string
@@ -26,7 +25,7 @@ const ProjectCard = ({
   blockchain,
   isFeatured = false,
   img
-}: ProjectCardProps) => {
+}: ProjectCardProps & {rating: number}) => {
   const cardClasses = `floating-card bg-[#223] border rounded-xl min-w-[260px] flex-1 transform p-5 text-left transition-all duration-300 hover:translate-y-[-3px] ${
     isFeatured ? 'border-[#c4f5] hover:border-[#c4f9]' : 'border-[#fff2] hover:border-[#c4f9]'
   }`
