@@ -40,6 +40,7 @@ export default async function Home() {
   const allForDisplay = allProjectsData
 
   let ratingsData: AllRatingsData = {}
+  console.log(`${BASE_URL}/api/projects-ratings`)
 
   try {
     const response = await fetch(`${BASE_URL}/api/projects-ratings`)
