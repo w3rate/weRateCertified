@@ -6,7 +6,16 @@ const RATING_CATEGORY_KEYS = ['team', 'codebase_security', 'usability_ux', 'comm
 export async function POST(request: Request) {
   try {
     const body = await request.json()
-    const {projectId, overallRating, usageDuration, detailedRatings, comment, selectedWallet} = body
+    const {
+      projectId,
+      overallRating,
+      usageDuration,
+      detailedRatings,
+      comment,
+      selectedWallet,
+      userName, // <<< New: Get userName from request
+      userAvatarUrl // <<< New: Get userAvatarUrl from request
+    } = body
 
     if (!projectId || (typeof projectId !== 'string' && typeof projectId !== 'number')) {
       return NextResponse.json({success: false, error: 'Valid projectId is required'}, {status: 400})
@@ -17,12 +26,23 @@ export async function POST(request: Request) {
       return NextResponse.json({success: false, error: 'Valid overallRating (0-5) is required'}, {status: 400})
     }
 
+    // Optional: Add validation for userName and userAvatarUrl if needed
+    // For example, if they are required or must be strings:
+    // if (!userName || typeof userName !== 'string') {
+    //   return NextResponse.json({success: false, error: 'Valid userName is required'}, {status: 400})
+    // }
+    // if (userAvatarUrl && typeof userAvatarUrl !== 'string') { // Assuming avatar can be optional
+    //   return NextResponse.json({success: false, error: 'Valid userAvatarUrl must be a string if provided'}, {status: 400})
+    // }
+
     const newReview = {
       overallRating,
       usageDuration: usageDuration || '',
       detailedRatings: detailedRatings || {},
       comment: comment || '',
       selectedWallet: selectedWallet || '',
+      userName: userName || '', // <<< New: Add to newReview object (default to empty string if not provided)
+      userAvatarUrl: userAvatarUrl || '', // <<< New: Add to newReview object (default to empty string if not provided)
       submittedAt: new Date().toISOString()
     }
 
@@ -63,7 +83,7 @@ export async function POST(request: Request) {
       }
 
       const updatePayload = {
-        ratings: FieldValue.arrayUnion(newReview),
+        ratings: FieldValue.arrayUnion(newReview), // newReview now contains userName and userAvatarUrl
         reviewCount,
         totalOverallRatingSum,
         totalAverageRating: newTotalAverageRating,

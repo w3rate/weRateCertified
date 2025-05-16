@@ -93,13 +93,18 @@ const ProjectReviewPage = ({params: paramsPromise}: {params: Promise<{id: string
     setSubmissionStatus(null)
     setSubmissionMessage('')
 
+    const userNameToSend = session?.user?.name || 'Solana Degen'
+    const userAvatarUrlToSend = session?.user?.image || '/logos/solana.svg'
+
     const reviewData = {
       projectId: currentProjectId,
       overallRating,
       usageDuration,
       detailedRatings,
       comment,
-      selectedWallet
+      selectedWallet,
+      userName: userNameToSend,
+      userAvatarUrl: userAvatarUrlToSend
     }
 
     try {

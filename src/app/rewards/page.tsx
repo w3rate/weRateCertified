@@ -256,7 +256,7 @@ const RewardsPage = () => {
       id: 1,
       rank: 1,
       name: 'Jupiter',
-      logo: 'https://cryptologos.cc/logos/placeholder-logo.png',
+      logo: '/logos/jupiter.svg',
       bid: '5,000 SOL',
       status: 'Current top bidder',
       isTop: true
@@ -265,7 +265,7 @@ const RewardsPage = () => {
       id: 2,
       rank: 2,
       name: 'Marinade Finance',
-      logo: 'https://avatars.githubusercontent.com/u/83628089',
+      logo: '/logos/marinade.svg',
       bid: '4,800 SOL',
       status: 'Active bidder',
       isTop: false
@@ -274,7 +274,7 @@ const RewardsPage = () => {
       id: 3,
       rank: 3,
       name: 'Raydium',
-      logo: 'https://cryptologos.cc/logos/placeholder-logo.png',
+      logo: '/logos/raydium.svg',
       bid: '4,500 SOL',
       status: 'Active bidder',
       isTop: false
@@ -282,8 +282,8 @@ const RewardsPage = () => {
     {
       id: 4,
       rank: 4,
-      name: 'Solana Fame',
-      logo: 'https://cryptologos.cc/logos/placeholder-logo.png',
+      name: 'Drift',
+      logo: '/logos/drift.svg',
       bid: '4,200 SOL',
       status: 'Active bidder',
       isTop: false
@@ -292,7 +292,7 @@ const RewardsPage = () => {
       id: 5,
       rank: 5,
       name: 'Mango Markets',
-      logo: 'https://cryptologos.cc/logos/placeholder-logo.png',
+      logo: '/logos/mango.svg',
       bid: '4,000 SOL',
       status: 'Active bidder',
       isTop: false
@@ -300,8 +300,8 @@ const RewardsPage = () => {
     {
       id: 6,
       rank: 6,
-      name: 'Solflare',
-      logo: 'https://cryptologos.cc/logos/placeholder-logo.png',
+      name: 'Solend',
+      logo: '/logos/solend.svg',
       bid: '3,800 SOL',
       status: 'Active bidder',
       isTop: false
@@ -309,9 +309,9 @@ const RewardsPage = () => {
   ]
 
   const tokenRewardPools = [
-    {id: 1, name: 'Jupiter', logo: 'https://cryptologos.cc/logos/placeholder-logo.png', amount: '5,000 JUP'},
-    {id: 2, name: 'Marinade Finance', logo: 'https://avatars.githubusercontent.com/u/83628089', amount: '2,500 MNDE'},
-    {id: 3, name: 'Raydium', logo: 'https://cryptologos.cc/logos/placeholder-logo.png', amount: '3,000 RAY'}
+    {id: 1, name: 'Jupiter', logo: '/logos/jupiter.svg', amount: '5,000 JUP'},
+    {id: 2, name: 'Marinade Finance', logo: '/logos/marinade.svg', amount: '2,500 MNDE'},
+    {id: 3, name: 'Raydium', logo: '/logos/raydium.svg', amount: '3,000 RAY'}
   ]
 
   const leaderboardData = [

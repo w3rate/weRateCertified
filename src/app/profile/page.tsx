@@ -3,6 +3,7 @@
 import Image from 'next/image'
 import {signOut} from 'next-auth/react'
 import {useState} from 'react'
+import {useSession} from 'next-auth/react'
 
 const PenIcon = ({className}: {className?: string}) => (
   <svg
@@ -119,6 +120,7 @@ const WalletIcon = ({className}: {className?: string}) => (
 )
 
 const UserProfilePage = () => {
+  const {data: session} = useSession()
   const primaryColor = '#C94EFF'
   const [activeTab, setActiveTab] = useState('projects')
 
@@ -144,7 +146,7 @@ const UserProfilePage = () => {
             <span className="relative mb-3 flex h-20 w-20 shrink-0 overflow-hidden rounded-full border-2 border-neutral-700">
               <Image
                 className="aspect-square h-full w-full object-cover"
-                src="/lovable-uploads/acace75c-dc31-41c6-ac33-d000d0a37f7a.png"
+                src={session?.user?.image || '/logos/solana.svg'}
                 alt="User Avatar"
                 width={80}
                 height={80}
@@ -152,7 +154,7 @@ const UserProfilePage = () => {
             </span>
             <div className="w-full">
               <div className="mb-1 flex items-center justify-center">
-                <h1 className="text-xl font-bold text-white">CryptoExplorer</h1>
+                <h1 className="text-xl font-bold text-white">{session?.user?.name || 'Solana Degen'}</h1>
                 <button
                   title="Edit Profile"
                   className={`ring-offset-background focus-visible:ring-ring inline-flex items-center justify-center gap-2 whitespace-nowrap border border-neutral-700 bg-transparent font-medium text-white transition-colors hover:bg-neutral-700/20 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 hover:border-[${primaryColor}] ml-2 h-8 w-8 rounded-md p-0 text-xs sm:text-sm`}

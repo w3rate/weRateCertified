@@ -23,6 +23,8 @@ interface FirestoreReview {
   comment: string
   submittedAt: string
   selectedWallet?: string
+  userName?: string
+  userAvatarUrl?: string
 }
 
 interface FirestoreRatingBreakdownCategory {
@@ -145,12 +147,12 @@ const ProjectRatingPage = ({params: paramsPromise}: {params: Promise<{id: string
   const staticSocialLinks = [
     {name: 'Twitter', url: 'https://twitter.com/example', imageUrl: '/x.svg'},
     {name: 'Github', url: 'https://github.com/example', imageUrl: '/github.svg'},
-    {name: 'Discord', url: 'https://discord.com/invite/example', imageUrl: '/discord.svg'},
-    {
-      name: 'Telegram',
-      url: 'https://t.me/example',
-      imageUrl: '/lovable-uploads/ba59896e-886e-4ec5-a09d-31eb12901347.png'
-    }
+    {name: 'Discord', url: 'https://discord.com/invite/example', imageUrl: '/discord.svg'}
+    // {
+    //   name: 'Telegram',
+    //   url: 'https://t.me/example',
+    //   imageUrl: '/lovable-uploads/ba59896e-886e-4ec5-a09d-31eb12901347.png'
+    // }
   ]
 
   return (
@@ -350,17 +352,32 @@ const ProjectRatingPage = ({params: paramsPromise}: {params: Promise<{id: string
                         >
                           <div className="mb-2 flex items-start justify-between">
                             <div className="flex items-center">
-                              <div className="mr-2 flex h-7 w-7 items-center justify-center rounded-full bg-gray-700 sm:h-8 sm:w-8">
-                                <span className="text-xs text-white">
-                                  {review.selectedWallet
-                                    ? review.selectedWallet.substring(0, 2) +
-                                      '..' +
-                                      review.selectedWallet.substring(review.selectedWallet.length - 2)
-                                    : `U${index + 1}`}
-                                </span>
-                              </div>
+                              {review.userAvatarUrl ? (
+                                <img
+                                  src={review.userAvatarUrl}
+                                  alt={review.userName ? `${review.userName}'s avatar` : 'User Avatar'}
+                                  className="mr-2 h-7 w-7 rounded-full object-cover sm:h-8 sm:w-8"
+                                  onError={(e) => {
+                                    e.currentTarget.src = '/logos/solana.svg'
+                                  }}
+                                />
+                              ) : (
+                                <div className="mr-2 flex h-7 w-7 items-center justify-center rounded-full bg-gray-700 sm:h-8 sm:w-8">
+                                  <span className="text-xs text-white">
+                                    {review.userName
+                                      ? review.userName.charAt(0).toUpperCase()
+                                      : review.selectedWallet
+                                        ? review.selectedWallet.substring(0, 2) +
+                                          '..' +
+                                          review.selectedWallet.substring(review.selectedWallet.length - 2)
+                                        : `U${index + 1}`}
+                                  </span>
+                                </div>
+                              )}
                               <div>
-                                <span className="text-xs font-medium text-white sm:text-sm">Anonymous User</span>
+                                <span className="text-xs font-medium text-white sm:text-sm">
+                                  {review.userName || 'Anonimous User'}
+                                </span>
                               </div>
                             </div>
                             <div className="flex space-x-1">
@@ -395,7 +412,7 @@ const ProjectRatingPage = ({params: paramsPromise}: {params: Promise<{id: string
                       {!loading && !error ? 'No reviews available yet.' : error ? '' : 'Loading reviews...'}
                     </p>
                   )}
-                  {firestoreData && typeof firestoreData.reviewCount === 'number' && firestoreData.reviewCount > 0 && (
+                  {/* {firestoreData && typeof firestoreData.reviewCount === 'number' && firestoreData.reviewCount > 0 && (
                     <div className="mt-4 text-center">
                       {!isNaN(currentProjectId) && (
                         <Link
@@ -406,7 +423,7 @@ const ProjectRatingPage = ({params: paramsPromise}: {params: Promise<{id: string
                         </Link>
                       )}
                     </div>
-                  )}
+                  )} */}
                 </div>
               </div>
             </>
