@@ -340,7 +340,7 @@ const ProjectRatingPage = ({params: paramsPromise}: {params: Promise<{id: string
                 <div className="absolute -inset-1 -z-10 rounded-xl bg-[#C94EFF]/10 blur-md"></div>
                 <div className="relative">
                   <div className="mb-3 flex items-center sm:mb-4">
-                    <img src="/users.svg" alt="Users" className="filter_purple_for_icons mr-2 h-4 w-4 sm:h-5 sm:w-5" />
+                    {/* <img src="/users.svg" alt="Users" className="filter_purple_for_icons mr-2 h-4 w-4 sm:h-5 sm:w-5" /> */}
                     <h2 className="text-base font-medium text-white sm:text-lg">Recent Reviews</h2>
                   </div>
                   {recentReviewsToDisplay.length > 0 ? (

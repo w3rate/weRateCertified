@@ -38,20 +38,27 @@ const ProjectReviewPage = ({params: paramsPromise}: {params: Promise<{id: string
   const [submissionStatus, setSubmissionStatus] = useState<'success' | 'error' | null>(null)
   const [submissionMessage, setSubmissionMessage] = useState<string>('')
 
-  let walletScore = ''
+  const [walletScore, setWalletScore] = useState<string>('')
   const wallet_score = async () =>
     await fetch('https://weratereview.onrender.com/analyze_wallet', {
       method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
       body: JSON.stringify({
         wallet_address: session?.user.solanaPublicKey
       })
-    }).then((r) => {
-      walletScore = String(r)
+    }).then(async (r) => {
+      const f = await r.json()
+      console.log(f)
+      setWalletScore(f.multiplier)
     })
 
   useEffect(() => {
+    console.log(walletScore)
     if (session?.user.solanaPublicKey && !walletScore) {
       wallet_score()
+      console.log(walletScore)
     }
   }, [session?.user.solanaPublicKey])
 
@@ -325,13 +332,7 @@ const ProjectReviewPage = ({params: paramsPromise}: {params: Promise<{id: string
                       >
                         <option value="">{session?.user.solanaPublicKey || 'Select wallet or add new'}</option>
                       </select>
-                      <button
-                        type="button"
-                        className="flex transform items-center justify-center gap-2 rounded-full border border-[#C94EFF]/80 bg-transparent px-4 py-2 text-sm font-medium text-[#C94EFF] transition-all duration-300 hover:scale-105 hover:bg-[#C94EFF]/10 sm:px-5"
-                      >
-                        <img src="/wallet.svg" alt="Wallet" className="filter_purple_for_icons h-4 w-4" />
-                        {walletScore || 'Add Wallet'}
-                      </button>
+                      {walletScore && <span>{`x${walletScore} scores!`}</span>}
                     </div>
                   </div>
                 </div>
