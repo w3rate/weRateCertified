@@ -10,8 +10,9 @@ import dynamic from 'next/dynamic'
 const WalletContextProvider = dynamic(() => import('@/providers/walletProvider'))
 
 export const metadata: Metadata = {
-  title: 'weRate Certified',
-  description: 'Discover. Rate. Earn. Repeat.'
+  title: 'Solana Certified',
+  description: 'Discover. Rate. Earn. Repeat.',
+  icons: ['/glowingStar.svg']
 }
 
 export default function RootLayout({
